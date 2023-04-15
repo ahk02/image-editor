@@ -12,15 +12,23 @@ public class Usercontroller {
     private UserRepository ur;
     @GetMapping
     public  @ResponseBody String base(){
-        return "server running";
+        return "user controller running";
     }
-    @PostMapping("/adduser")
-    public @ResponseBody String adduser(@RequestParam String user,@RequestParam String password){
-        ur.save(new User(user,user,password));
-        return user;
+    @PostMapping("/signup")
+    public @ResponseBody String adduser(@RequestParam String email,@RequestParam String password){
+        ur.save(new User(email,email,password));
+        return email;
     }
-    @GetMapping("/getusers")
-    public @ResponseBody void getuser(){
-        ur.findAll().forEach(u->System.out.println(u.getEmail()));
+    @PostMapping("/signin")
+    public @ResponseBody Boolean checkuser(@RequestParam String email,@RequestParam String password){
+        User user = ur.findByEmail(email);
+        if(user==null)
+            return false;
+        else if(user.getPassword().equals(password))
+            {
+                return true;
+            }
+        return false;
     }
+
 }
