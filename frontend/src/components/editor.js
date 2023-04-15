@@ -1,8 +1,9 @@
 import { useState } from "react";
 import FilerobotImageEditor, { TABS, TOOLS } from "react-filerobot-image-editor";
+import { useNavigate } from "react-router-dom";
 function Editor() {
-    const [im, setim] = useState(null)
     const [tim, settim] = useState(null)
+    const nav = useNavigate()
     const upimg = async (event) => {
         const file = event.target.files[0]
         console.log(file)
@@ -14,8 +15,8 @@ function Editor() {
             finalb64 = `data:${file.type};base64,${base64}`
             settim(finalb64)
             const formdata = new FormData()
-            formdata.append('id', "username/" + file.name)
-            formdata.append('user', "username")
+            formdata.append('id', localStorage.user +"/"+ file.name)
+            formdata.append('user', localStorage.user)
             formdata.append("imgname", file.name)
             formdata.append("source", finalb64)
             const res = await fetch("http://localhost:8080/image/add", {
@@ -26,11 +27,17 @@ function Editor() {
             alert(text)
         }
     }
-
+    const logout=()=>{
+        localStorage.removeItem('user')
+    alert("logged out")
+    nav('/login')
+    }
     return (
-        <div className="bg-purple-500 m-2">
+        <div className="m-2 h-screen">
+            <button onClick={logout}>logout </button>
             <h1>upload image</h1>
             {!tim && <input type="file" name="upload" onChange={upimg} />}
+            <div className="h-[90%]">
             {tim && <FilerobotImageEditor 
                 source={tim}
                 onSave={(editedimageobj, designstate) => {
@@ -55,8 +62,11 @@ function Editor() {
                 onModify={(designstate) => {
                     console.log(designstate)
                 }}
+                useZoomPresetsMenu={true}
+                observePluginContainerSize={false}
             />}
-            {tim && <img src={tim} />}
+            </div>
+            {/* {tim && <img src={tim} />} */}
         </div>
     );
 }

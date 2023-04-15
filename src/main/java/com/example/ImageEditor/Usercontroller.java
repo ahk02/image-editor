@@ -5,8 +5,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@CrossOrigin
 @RequestMapping("/user")
+@CrossOrigin
 public class Usercontroller {
     @Autowired
     private UserRepository ur;
