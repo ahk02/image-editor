@@ -17,7 +17,7 @@ public class AlbumController {
 
     @PostMapping("/moveImg")
     public @ResponseBody String moveImg(@RequestParam String source, @RequestParam String dest, @RequestParam String imageName, @RequestParam String username) {
-        List<Album> albums = albumRepository.findByName(username);
+        List<Album> albums = albumRepository.findByCreator(username);
         boolean validSource = false;
         Album sourceAlbum = null;
         for (Album a : albums) {
@@ -67,7 +67,7 @@ public class AlbumController {
 
     @PostMapping("/newAlbum")
     public @ResponseBody String createNewAlbum(@RequestParam String albumName, @RequestParam String username) {
-        List<Album> albums = albumRepository.findByName(username);
+        List<Album> albums = albumRepository.findByCreator(username);
         boolean duplicateName = false;
         for (Album a : albums) {
             if (Objects.equals(a.getName(), albumName)) {
@@ -84,4 +84,37 @@ public class AlbumController {
 //        System.out.println(newAlbum.toString());
         return "success";
     }
+    @PostMapping("/addimage")
+    public @ResponseBody String addImage(@RequestParam String albumname,@RequestParam String username,@RequestParam String imgname , @RequestParam String source)
+    {
+        List<Album> albums = albumRepository.findByCreator(username);
+        System.out.println(albums.size());
+        Album curralbum=null;
+        for (Album a : albums) {
+            System.out.println(a.toString());
+            if (Objects.equals(a.getName(), albumname)) {
+                curralbum=a;
+                break;
+            }
+        }
+        if(curralbum==null)
+            return "album doesnt exist";
+        Image currimage= new Image(username+"/"+imgname,username,imgname,source);
+        curralbum.images.add(currimage);
+        albumRepository.save(curralbum);
+        return "success";
+    }
+    @PostMapping("/getalbums")
+    public @ResponseBody List<String> getAlbums(@RequestParam String creator)
+    {
+        List<Album> a=albumRepository.findByCreator(creator);
+        List<String> aNames = new ArrayList<>() ;
+        for(Album i : a){
+            aNames.add(i.getName());
+        }
+        return aNames;
+    }
+
+
+
 }
