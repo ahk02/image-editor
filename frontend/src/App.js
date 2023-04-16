@@ -4,13 +4,17 @@ import Album from './components/album';
 import Home from './components/home';
 import Login from './components/login';
 import Signup from './components/signup';
+import Editor from './components/editor';
+import Navbar from './components/navbar';
 
 function App() {
   return (
-    <div>
+    <div className=' h-screen'>
       <BrowserRouter>
+      <Navbar/>
       <Routes>
         <Route path='/' element={<Home/>}/>
+        <Route path='/editor' element={<Editor/>}/>
         <Route path='/album' element={<Album/>}/>
         <Route path='/login' element={<Login/>}/>
         <Route path='/signup' element={<Signup/>}/>
