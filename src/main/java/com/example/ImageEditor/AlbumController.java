@@ -115,6 +115,49 @@ public class AlbumController {
         return aNames;
     }
 
+    @PostMapping("/deleteImg")
+    public @ResponseBody String deleteImg(@RequestParam String albumName, @RequestParam String imgName, @RequestParam String username) {
+        List<Album> albums=albumRepository.findByCreator(username);
+        Album album = null;
+        for (Album a : albums) {
+            if (Objects.equals(a.getName(), albumName)) {
+                album = a;
+                break;
+            }
+        }
+        if (album == null) {
+            return "invalid album name";
+        }
 
+        Image img = null;
+        for (Image i : album.images) {
+            if (Objects.equals(i.getImgname(), imgName)) {
+                img = i;
+                break;
+            }
+        }
+        if (img == null) {
+            return "invalid image name";
+        }
+        album.images.remove(img);
+        albumRepository.save(album);
+        return "success";
+    }
 
+    @PostMapping("/getimages")
+    public @ResponseBody List<String> getImages(@RequestParam String albumName, @RequestParam String creator) {
+        List<Album> albums=albumRepository.findByCreator(creator);
+        Album album = null;
+        for (Album a : albums) {
+            if (Objects.equals(a.getName(), albumName)) {
+                album = a;
+                break;
+            }
+        }
+        List<String> images = new ArrayList<>();
+        for (Image i : album.images) {
+            images.add(i.getImgname());
+        }
+        return images;
+    }
 }

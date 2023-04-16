@@ -37,7 +37,7 @@ function Album() {
 
     return (
         <div className="max-w-md mx-auto my-4 p-4 bg-white rounded-md shadow-md">
-            <h2 className="text-lg font-medium mb-2">Upload an Image</h2>
+            <h2 className="text-lg font-medium mb-2">Move an Image</h2>
             <form onSubmit={handleImgMoveSubmit}>
                 <div className="mb-2">
                     <label htmlFor="sourceAlbumName" className="block text-gray-700 font-medium mb-1">Source Album Name:</label>
@@ -75,7 +75,7 @@ function Album() {
                     />
                 </div>
 
-                <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50">Upload Image</button>
+                <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50">Move Image</button>
             </form>
 
             <h2 className="text-lg font-medium mt-4 mb-2">Create a New Album</h2>

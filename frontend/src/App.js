@@ -6,6 +6,7 @@ import Login from './components/login';
 import Signup from './components/signup';
 import Editor from './components/editor';
 import Navbar from './components/navbar';
+import AlbumList from './components/album_temp';
 
 function App() {
   return (
@@ -15,7 +16,7 @@ function App() {
       <Routes>
         <Route path='/' element={<Home/>}/>
         <Route path='/editor' element={<Editor/>}/>
-        <Route path='/album' element={<Album/>}/>
+        <Route path='/album' element={<AlbumList/>}/>
         <Route path='/login' element={<Login/>}/>
         <Route path='/signup' element={<Signup/>}/>
       </Routes>
