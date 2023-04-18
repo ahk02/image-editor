@@ -1,3 +1,23 @@
+.hVWIRN {
+    
+    height: 35px !important;
+    width: 80px !important;
+}
+.ZdrwB .sc-lxwit0-0 {
+    font-family: system-ui !important;
+    font-style: normal !important;
+    font-weight: normal !important;
+    font-size: 16px !important;
+}
+.ZdrwB {
+--tw-bg-opacity: 1  !important;
+    background-color: rgb(37 99 235 / var(--tw-bg-opacity)) !important;
+    border-radius: 8px !important;
+}
+.cyhfYe svg{
+    width: 100px !important;
+    height: 100px !important;
+}
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

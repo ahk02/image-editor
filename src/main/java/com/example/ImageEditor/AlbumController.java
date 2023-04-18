@@ -145,7 +145,7 @@ public class AlbumController {
     }
 
     @PostMapping("/getimages")
-    public @ResponseBody List<String> getImages(@RequestParam String albumName, @RequestParam String creator) {
+    public @ResponseBody List<Image> getImages(@RequestParam String albumName, @RequestParam String creator) {
         List<Album> albums=albumRepository.findByCreator(creator);
         Album album = null;
         for (Album a : albums) {
@@ -154,9 +154,9 @@ public class AlbumController {
                 break;
             }
         }
-        List<String> images = new ArrayList<>();
+        List<Image> images = new ArrayList<>();
         for (Image i : album.images) {
-            images.add(i.getImgname());
+            images.add(i);
         }
         return images;
     }

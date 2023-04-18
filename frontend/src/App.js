@@ -7,6 +7,7 @@ import Signup from './components/signup';
 import Editor from './components/editor';
 import Navbar from './components/navbar';
 import AlbumList from './components/album_temp';
+import Test from './components/test';
 
 function App() {
   return (

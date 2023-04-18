@@ -87,6 +87,7 @@ function Editor() {
                     </label>
                 </div>
                 }
+                
             
                 {tim && <div className="h-full">
                 <FilerobotImageEditor

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Singlealbum from './singlealbum';
 
 function AlbumList() {
   const [albums, setAlbums] = useState([]);
@@ -63,8 +64,8 @@ function AlbumList() {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen flex flex-col justify-center items-center">
-      <div className="max-w-lg mx-auto p-6 bg-white rounded-lg shadow-lg">
+    <div className="bg-gray-100 mt-2">
+      {/* <div className=" mx-auto p-6 bg-white rounded-lg shadow-lg">
         <label htmlFor="album-select" className="block font-medium mb-2">Select an album:</label>
         <select id="album-select" value={selectedAlbum} onChange={handleAlbumChange} className="w-full px-3 py-2 mb-4 border border-gray-300 rounded-lg">
           <option value="">--Please choose an album--</option>
@@ -88,7 +89,10 @@ function AlbumList() {
             </ul>
           </div>
         )}
-      </div>
+      </div> */}
+      {albums && albums.map((n)=>(
+        <Singlealbum name={n}/>
+      ))}
     </div>
   );
 }
