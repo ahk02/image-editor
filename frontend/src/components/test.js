@@ -6,6 +6,7 @@ const SOCKET_URL = 'http://localhost:8080/ws-message';
 const Test = () => {
     const[clientref, setcr]=useState(null)
     const [message,setmessage]=useState("")
+    
   let onConnected = () => {
     console.log("Connected!!")
   }
@@ -22,7 +23,8 @@ const Test = () => {
     const res = await fetch("http://localhost:8080/send",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({"name":"sent from original client"})
+        body:JSON.stringify({"roomid":"asqwew",
+        "imgsrc":"base64"})
     })
     console.log(res)
   }

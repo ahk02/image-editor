@@ -18,7 +18,7 @@ function Navbar() {
            {loc.pathname==='/editor'? null: <button className="inline-flex items-center bg-blue-600 text-slate-50 border-0 py-1 px-3 focus:outline-none  hover:bg-slate-500 rounded-lg text-base mt-3  md:mt-0" onClick={()=>{nav('/editor')}}>
                         Edit Images
                     </button>}
-                    <button className="inline-flex items-center bg-blue-600 text-slate-50 border-0 py-1 px-3 focus:outline-none  hover:bg-slate-500 rounded-lg text-base mt-3  md:mt-0" onClick={()=>{}}>
+                    <button className="inline-flex items-center bg-blue-600 text-slate-50 border-0 py-1 px-3 focus:outline-none  hover:bg-slate-500 rounded-lg text-base mt-3  md:mt-0" onClick={()=>{nav("/room")}}>
                         Create a room
                     </button>
           { localStorage.user   ?     <button className="inline-flex items-center bg-blue-600 text-slate-50 border-0 py-1 px-3 focus:outline-none  hover:bg-slate-500 rounded-lg text-base mt-3  md:mt-0" onClick={logout}>

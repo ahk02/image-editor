@@ -1,12 +1,18 @@
 import { useState } from "react";
 import FilerobotImageEditor, { TABS, TOOLS } from "react-filerobot-image-editor";
-import { Form, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import SockJsClient from 'react-stomp';
+const SOCKET_URL = 'http://localhost:8080/ws-message';
+
 function Editor() {
     const [tim, settim] = useState()
     const [show, setshow] = useState(false)
     const [albums, setalbums] = useState([])
     const [src, setsrc] = useState(null)
     const [imgname, setimgname] = useState(null)
+    const loc = useLocation()
+    const[clientref, setcr]=useState(null)
+
     const nav = useNavigate()
     const upimg = async (event) => {
         const file = event.target.files[0]
@@ -60,8 +66,35 @@ function Editor() {
         alert(text)
         setshow(false)
     }
+    let send=async ()=>{
+        console.log("sent message")
+        console.log(src)
+        clientref.sendMessage('/app/sendMessage',JSON.stringify({"name":"sent from original client"}))
+        const res = await fetch("http://localhost:8080/send",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({"name":src})
+        })
+        console.log(res)
+      }
+      let onMessageReceived = (usrc) => {
+        console.log(usrc.name);
+        settim(usrc.name)
+      }
+      let onConnected = () => {
+        console.log("Connected!!")
+      }
     return (
         <div className="m-2 h-[80%] ">
+            <SockJsClient
+                url={SOCKET_URL}
+                topics={['/topic/message']}
+                onConnect={onConnected}
+                onDisconnect={console.log("Disconnected!")}
+                onMessage={usrc => onMessageReceived(usrc)}
+                debug={false}
+                ref={(client) => { setcr(client) }}
+            />
             {show && <div className=" w-[50%] absolute m-auto bg-slate-50 left-0 right-0 ml-auto mr-auto z-[1500] p-2 mx-3 rounded-lg max-h-80 overflow-y-auto border border-grey-200 shadow-md my-3 ">
                 <div className="flex flex-row justify-around" >
                     <button className="bg-blue-300 p-1 rounded " onClick={showalbums}>Add to album</button>
@@ -75,7 +108,7 @@ function Editor() {
                 </div>
 
             </div>}
-            {!tim && 
+            {!tim &&
                 <div class="flex items-center justify-center w-full h-full mt-5 ">
                     <label class="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
                         <div class="flex flex-col items-center justify-center h-full  pt-5 pb-6">
@@ -86,17 +119,22 @@ function Editor() {
                         <input id="dropzone-file" type="file" onChange={upimg} className="hidden" />
                     </label>
                 </div>
-                }
-                
-            
-                {tim && <div className="h-full">
+            }
+
+
+            {tim && <div className="h-full">
                 <FilerobotImageEditor
                     source={tim}
                     onSave={(editedimageobj, designstate) => {
-                        setshow(true)
+                        if(loc.pathname.startsWith("/room"))
+                        {
+                            setsrc(editedimageobj.imageBase64)
+                            send()
+                        }else
+                        {setshow(true)
                         setimgname(editedimageobj.name)
                         setsrc(editedimageobj.imageBase64)
-                        console.log('saved', editedimageobj, designstate)
+                        console.log('saved', editedimageobj, designstate)}
                     }}
                     showCanvasOnly={false}
                     onBeforeSave={(test) => console.log(test)}
@@ -107,8 +145,8 @@ function Editor() {
                     observePluginContainerSize={true}
 
                 />
-                </div>}
-            
+            </div>}
+
             {/* {tim && <img src={tim} />} */}
         </div>
     );
