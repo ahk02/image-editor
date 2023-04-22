@@ -17,6 +17,48 @@ public class AlbumController {
 
     @PostMapping("/moveImg")
     public @ResponseBody String moveImg(@RequestParam String source, @RequestParam String dest, @RequestParam String imageName, @RequestParam String username) {
+
+        AlbumsAndImage albumsAndImage = new AlbumsAndImage();
+        ExistsChecker checker = new AlbumExistsChecker(albumRepository);
+        ExistsChecker checker1 = new AlbumExistsChecker(albumRepository);
+        checker.setNextChecker(checker1);
+        ExistsChecker checker2 = new ImageExistsChecker();
+        checker1.setNextChecker(checker2);
+
+        AlbumsAndImage res = checker.check(username, source, dest, imageName, albumsAndImage);
+
+        Album sourceAlbum = null;
+        Album destAlbum = null;
+        Image img = res.getImg();
+
+        if (res.getAlbumList().size() == 0) {
+            return "invalid source album";
+        }
+        else {
+            sourceAlbum = res.getAlbumList().get(0);
+            if (res.getAlbumList().size() == 1) {
+                return "invalid destination album";
+            }
+            else {
+                destAlbum = res.getAlbumList().get(1);
+                if (img == null) {
+                    return "invalid image name";
+                }
+                else {
+                    // code to remove image from sourceAlbum's images
+                    sourceAlbum.images.remove(img);
+                    // code to add image to destAlbum's images
+                    destAlbum.images.add(img);
+
+                    albumRepository.save(sourceAlbum);
+                    albumRepository.save(destAlbum);
+                    return "success";
+                }
+            }
+        }
+
+        //
+        /*
         List<Album> albums = albumRepository.findByCreator(username);
         boolean validSource = false;
         Album sourceAlbum = null;
@@ -63,6 +105,8 @@ public class AlbumController {
         albumRepository.save(sourceAlbum);
         albumRepository.save(destAlbum);
         return "success";
+
+         */
     }
 
     @PostMapping("/newAlbum")
@@ -78,8 +122,13 @@ public class AlbumController {
         if (duplicateName) {
             return "album already exists";
         }
-
-        Album newAlbum = new Album(username + "/" + albumName, albumName, username, new ArrayList<Image>(), "");
+        Album newAlbum = new AlbumBuilder()
+                .setId(username + "/" + albumName)
+                .setName(albumName)
+                .setCreator(username)
+                .createImageList()
+                .setPath("")
+                .build();
         albumRepository.save(newAlbum);
 //        System.out.println(newAlbum.toString());
         return "success";
