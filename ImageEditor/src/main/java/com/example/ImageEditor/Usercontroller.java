@@ -1,26 +1,23 @@
 package com.example.ImageEditor;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Component;
 
-@Controller
-@RequestMapping("/user")
-@CrossOrigin
-public class Usercontroller {
+@Component
+public class Usercontroller implements UserControllerInterface {
     @Autowired
     private UserRepository ur;
-    @GetMapping
-    public  @ResponseBody String base(){
+
+    public String base(){
         return "user controller running";
     }
-    @PostMapping("/signup")
-    public @ResponseBody String adduser(@RequestParam String email,@RequestParam String password){
+
+    public String adduser(String email, String password){
         ur.save(new User(email,email,password));
         return email;
     }
-    @PostMapping("/signin")
-    public @ResponseBody Boolean checkuser(@RequestParam String email,@RequestParam String password){
+
+    public Boolean checkuser(String email, String password){
         User user = ur.findByEmail(email);
         if(user==null)
             return false;
