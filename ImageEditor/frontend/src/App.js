@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
 import Home from './components/home';
 import Login from './components/login';
@@ -11,15 +10,15 @@ function App() {
   return (
     <div className=' h-screen'>
       <BrowserRouter>
-      <Navbar/>
-      <Routes>
-        <Route path='/' element={<Home/>}/>
-        <Route path='/editor' element={<Editor/>}/>
-        <Route path='/room/:id' element={<Editor/>}/>
-        <Route path='/album' element={<AlbumList/>}/>
-        <Route path='/login' element={<Login/>}/>
-        <Route path='/signup' element={<Signup/>}/>
-      </Routes>
+        <Navbar />
+        <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='/editor' element={<Editor />} />
+          <Route path='/room/:id' element={<Editor />} />
+          <Route path='/album' element={<AlbumList />} />
+          <Route path='/login' element={<Login />} />
+          <Route path='/signup' element={<Signup />} />
+        </Routes>
       </BrowserRouter>
     </div>
   );

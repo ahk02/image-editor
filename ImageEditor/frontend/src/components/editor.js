@@ -1,56 +1,61 @@
 import { useEffect, useState } from "react";
 import FilerobotImageEditor from "react-filerobot-image-editor";
 import { useLocation, useParams } from "react-router-dom";
-import SockJS  from "sockjs-client";
+import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 const SOCKET_URL = 'http://localhost:9000/ws-message';
 
 function Editor() {
     const [tim, settim] = useState()
     const [show, setshow] = useState(false)
-    const [albums, setalbums] = useState([])
+    const [albums, setalbums] = useState(null)
     const [src, setsrc] = useState(null)
     const [imgname, setimgname] = useState(null)
     const loc = useLocation()
-    const param=useParams()
-    const[stompClient, setcr]=useState(null)
+    const param = useParams()
+    const [stompClient, setcr] = useState(null)
     const socket = new SockJS(SOCKET_URL);
     useEffect(() => {
-     if(loc.pathname.startsWith("/room"))
-       { const stompClient = Stomp.over(socket);
-        stompClient.connect({}, (x) => {
-          console.log("connected to server",x)
-          setcr(stompClient)
-        })}
-        
-      }, []);
+        if (loc.pathname.startsWith("/room")) {
+            const stompClient = Stomp.over(socket);
+            stompClient.connect({}, (x) => {
+                console.log("connected to server", x)
+                setcr(stompClient)
+            })
+        }
+
+    }, []);
     useEffect(() => {
-        if(loc.pathname.startsWith("/room"))
-        {if (stompClient) {
-            stompClient.subscribe('/topic/message', (message) => {
-              const temp = JSON.parse(message.body)
-              if(temp.user!==localStorage.user)
-                    settim(temp.imgsrc)
-            });
-          }}
+        if (loc.state)
+            settim(loc.state.imgsrc)
+    }, []);
+    useEffect(() => {
+        if (loc.pathname.startsWith("/room")) {
+            if (stompClient) {
+                stompClient.subscribe('/topic/message', (message) => {
+                    const temp = JSON.parse(message.body)
+                    if (temp.user !== localStorage.user)
+                        settim(temp.imgsrc)
+                });
+            }
+        }
     }, [stompClient]);
 
     useEffect(() => {
-        if(loc.pathname.startsWith("/room")&&!tim)
-        {
-            const getimg = async()=>{
+        if (loc.pathname.startsWith("/room") && !tim) {
+            const getimg = async () => {
                 const formdata = new FormData()
-                formdata.append('room_id',param.id)
-                const res = await fetch("http://localhost:9000/room/getimg",{
-                    method:"POST",
-                    body:formdata
+                formdata.append('room_id', param.id)
+                const res = await fetch("http://localhost:9000/room/getimg", {
+                    method: "POST",
+                    body: formdata
                 })
                 const text = await res.text()
                 settim(text)
             }
             getimg()
         }
-    }, []);      
+    }, []);
 
     const upimg = async (event) => {
         const file = event.target.files[0]
@@ -76,11 +81,8 @@ function Editor() {
         setalbums([...json])
 
     }
-    
+
     const chosealbum = async (e) => {
-        console.log(e.target.name)
-        console.log(imgname)
-        console.log(src)
         const formdata = new FormData()
         formdata.append('albumname', e.target.name)
         formdata.append('username', localStorage.user)
@@ -94,29 +96,30 @@ function Editor() {
         alert(text)
         setshow(false)
     }
-    let send=async (tmp)=>{
-        const res = await fetch("http://localhost:9000/send",{
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({"user":localStorage.user,"room_id":param.id, "imgsrc": tmp})
+    let send = async (tmp) => {
+        const res = await fetch("http://localhost:9000/send", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ "user": localStorage.user, "room_id": param.id, "imgsrc": tmp })
         })
         console.log(res)
-      }
+    }
 
     return (
         <div className="m-2 h-[80%] ">
-            {show && <div className=" w-[50%] absolute m-auto bg-slate-50 left-0 right-0 ml-auto mr-auto z-[1500] p-2 mx-3 rounded-lg max-h-80 overflow-y-auto border border-grey-200 shadow-md my-3 ">
-                <div className="flex flex-row justify-around" >
-                    <button className="bg-blue-300 p-1 rounded " onClick={showalbums}>Add to album</button>
-                    <button className="bg-blue-300 p-1 rounded">Download </button>
+            {show && <div className="fixed top-0 left-0 w-screen h-screen bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
+                <div className="bg-white shadow-md rounded px-4 pt-6 pb-8 mb-4 w-[75%]">
+                    <div className="flex flex-row justify-around" >
+                        <button className="bg-blue-600 text-white p-1 rounded " onClick={showalbums}>Add to album</button>
+                        <button className="bg-blue-600 text-white p-1 rounded">Download </button>
+                    </div>
+                    <div className="mt-2 grid grid-flow-row gap-2 ">
+                        {albums && <h1 className="text-center"> Select an album </h1>}
+                        {albums && albums.map((n) => (
+                            <button onClick={chosealbum} name={n} className="border border-black rounded-md bg-blue-300 ">{n}</button>
+                        ))}
+                    </div>
                 </div>
-                <div className="mt-2 grid grid-flow-row gap-2 ">
-                    <h1 className="text-center"> Select an album </h1>
-                    {albums.map((n) => (
-                        <button onClick={chosealbum} name={n} className="border border-black rounded-md">{n}</button>
-                    ))}
-                </div>
-
             </div>}
             {!tim &&
                 <div className="flex items-center justify-center w-full h-full mt-5 ">
@@ -136,17 +139,20 @@ function Editor() {
                 <FilerobotImageEditor
                     source={tim}
                     onSave={(editedimageobj, designstate) => {
-                        if(loc.pathname.startsWith("/room"))
-                        {
+                        if (loc.pathname.startsWith("/room")) {
                             send(editedimageobj.imageBase64)
-                        }else
-                        {setshow(true)
-                        setimgname(editedimageobj.name)
-                        setsrc(editedimageobj.imageBase64)
+                        } else {
+                            console.log(editedimageobj.name)
+                            setshow(true)
+                            setimgname(editedimageobj.name)
+                            setsrc(editedimageobj.imageBase64)
                         }
                     }}
                     showCanvasOnly={false}
-                    onBeforeSave={(test) => console.log(test)}
+                    onBeforeSave={(editedimageobj) => {
+                        if (loc.state)
+                            editedimageobj.name = loc.state.name
+                    }}
                     onModify={(designstate) => {
                         console.log(designstate)
                     }}
@@ -155,8 +161,6 @@ function Editor() {
 
                 />
             </div>}
-
-            {/* {tim && <img src={tim} />} */}
         </div>
     );
 }

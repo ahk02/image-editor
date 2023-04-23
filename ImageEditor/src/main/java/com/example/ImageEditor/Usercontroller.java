@@ -14,7 +14,7 @@ public class Usercontroller implements UserControllerInterface {
 
     public String adduser(String email, String password){
         ur.save(new User(email,email,password));
-        return email;
+        return "Successfully signed up";
     }
 
     public Boolean checkuser(String email, String password){
